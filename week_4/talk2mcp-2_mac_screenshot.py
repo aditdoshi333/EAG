@@ -15,7 +15,7 @@ api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
 # Track iteration state
-max_iterations = 10
+max_iterations = 20
 iteration = 0
 steps_performed = []
 
@@ -63,12 +63,23 @@ async def main():
     user_text = "Hello world"
     print(f"User input text: {user_text}")
     
+    # Get recipient email address
+    recipient_email = os.environ.get("RECIPIENT_EMAIL", "your.email@gmail.com")
+    print(f"Email will be sent to: {recipient_email}")
+    
+    # Debug environment variables
+    gmail_user = os.environ.get("GMAIL_USER")
+    gmail_app_password = os.environ.get("GMAIL_APP_PASSWORD")
+    print(f"Gmail credentials check: GMAIL_USER is {'set' if gmail_user else 'not set'}")
+    print(f"Gmail credentials check: GMAIL_APP_PASSWORD is {'set' if gmail_app_password else 'not set'}")
+    
     try:
         # Connect to the MCP server
         print("Establishing connection to MCP server...")
         server_params = StdioServerParameters(
             command="python",
-            args=["example2-3_mac_screenshot.py"]
+            args=["example2-3_mac_screenshot.py"],
+            env=os.environ.copy()  # Pass the current environment variables to the subprocess
         )
 
         async with stdio_client(server_params) as (read, write):
@@ -125,6 +136,7 @@ For example:
 - FUNCTION_CALL: click_button|rectangle_button
 - FUNCTION_CALL: draw_rectangle|400|300
 - FUNCTION_CALL: add_text|Hello world
+- FUNCTION_CALL: send_email|{recipient_email}|{user_text}
 
 Your goal is to display the text "{user_text}" inside a rectangle in the paint app.
 Follow these steps carefully and in order:
@@ -142,6 +154,8 @@ Follow these steps carefully and in order:
 12. Click on the text button
 13. Wait a moment (1-2 seconds) for the app to process
 14. Add the text inside the rectangle
+15. Take one final screenshot to capture the completed drawing
+16. Send an email with the screenshot attached and use the text as the email subject (to {recipient_email})
 
 DO NOT include any explanations or additional text.
 Your entire response should be a single line starting with FUNCTION_CALL:
@@ -234,9 +248,9 @@ Your entire response should be a single line starting with FUNCTION_CALL:
                             await asyncio.sleep(1)
                             
                         # Check if we've completed all necessary steps
-                        if func_name == "add_text" and user_text == arguments.get("text", ""):
+                        if func_name == "send_email" and recipient_email == arguments.get("recipient_email", ""):
                             print("\n=== Task Completed ===")
-                            print(f"Successfully displayed '{user_text}' in a rectangle.")
+                            print(f"Successfully displayed '{user_text}' in a rectangle and sent email to {recipient_email}.")
                             break
                         
                     except Exception as e:

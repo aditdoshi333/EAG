@@ -12,6 +12,15 @@ from PIL import Image
 import io
 import numpy as np
 import pyautogui
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Helper function to make numpy types JSON serializable
 def make_json_serializable(obj):
@@ -812,6 +821,129 @@ async def resize_paint_window(width: int = 800, height: int = 600) -> dict:
                 TextContent(
                     type="text",
                     text=f"Error resizing window: {str(e)}"
+                )
+            ]
+        }
+
+@mcp.tool()
+async def send_email(recipient_email: str, subject: str, message: str = None) -> dict:
+    """Send an email with the screenshot attached and the input text as subject"""
+    global last_screenshot_path
+    try:
+        # Check if screenshot exists
+        if not last_screenshot_path or not os.path.exists(last_screenshot_path):
+            return {
+                "content": [
+                    TextContent(
+                        type="text",
+                        text="No screenshot available to send. Please take a screenshot first."
+                    )
+                ]
+            }
+        
+        # Get environment variables for Gmail credentials
+        gmail_user = os.environ.get("GMAIL_USER")
+        gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
+        
+        # Debug info
+        print(f"Email credentials check: GMAIL_USER is {'set' if gmail_user else 'not set'}")
+        print(f"Email credentials check: GMAIL_APP_PASSWORD is {'set' if gmail_password else 'not set'}")
+        
+        if not gmail_user or not gmail_password:
+            # List all environment variables for debugging (without showing values)
+            env_vars = list(os.environ.keys())
+            print(f"Available environment variables: {env_vars}")
+            
+            return {
+                "content": [
+                    TextContent(
+                        type="text",
+                        text=f"Missing Gmail credentials in environment variables. Please set GMAIL_USER and GMAIL_APP_PASSWORD. Available environment variables: {env_vars}"
+                    )
+                ]
+            }
+        
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = gmail_user
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+        
+        # Add message body
+        if message:
+            body = message
+        else:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            body = f"""
+            Automated Paint Drawing Completed
+            
+            Text: {subject}
+            Time: {timestamp}
+            
+            This email was automatically sent by the Screenshot Automator.
+            """
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Attach screenshot
+        try:
+            with open(last_screenshot_path, 'rb') as f:
+                img_data = f.read()
+            img_attachment = MIMEImage(img_data, name=os.path.basename(last_screenshot_path))
+            msg.attach(img_attachment)
+            print(f"Screenshot attached from {last_screenshot_path}")
+        except Exception as e:
+            print(f"Warning: Could not attach screenshot: {str(e)}")
+        
+        # Send email
+        try:
+            print(f"Attempting to send email to {recipient_email} from {gmail_user}")
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            server.ehlo()
+            print("Connected to Gmail server")
+            server.login(gmail_user, gmail_password)
+            print("Login successful")
+            server.send_message(msg)
+            print("Message sent")
+            server.close()
+            print("Connection closed")
+            
+            return {
+                "content": [
+                    TextContent(
+                        type="text",
+                        text=f"Email sent successfully to {recipient_email} with subject '{subject}'"
+                    )
+                ]
+            }
+        except smtplib.SMTPAuthenticationError:
+            print("SMTP Authentication Error: Check your Gmail username and app password")
+            return {
+                "content": [
+                    TextContent(
+                        type="text",
+                        text="Failed to send email: Authentication error. Make sure you're using an App Password, not your regular Gmail password."
+                    )
+                ]
+            }
+        except Exception as e:
+            print(f"Error sending email: {str(e)}")
+            return {
+                "content": [
+                    TextContent(
+                        type="text",
+                        text=f"Error sending email: {str(e)}"
+                    )
+                ]
+            }
+            
+    except Exception as e:
+        print(f"Error preparing email: {str(e)}")
+        return {
+            "content": [
+                TextContent(
+                    type="text",
+                    text=f"Error preparing email: {str(e)}"
                 )
             ]
         }
