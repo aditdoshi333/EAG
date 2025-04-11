@@ -1,0 +1,9 @@
+gradio
+requests
+google-generativeai
+python-dotenv
+mcp
+numpy
+pandas
+python-dateutil
+asyncio
