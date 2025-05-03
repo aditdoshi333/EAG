@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Email Tone Checker",
+    "version": "1.0",
+    "description": "Analyze the tone of your email responses",
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://api.openai.com/*"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+}

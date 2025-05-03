@@ -60,21 +60,25 @@ def search():
         result = action_handler.search_pages(input_data)
         
         # Filter results based on similarity threshold
-        SIMILARITY_THRESHOLD = 0.000005  # Adjust this value to control result relevance
+        SIMILARITY_THRESHOLD = 0.001  # Increased threshold for better relevance
         filtered_results = []
         
         for search_result in result.results:
-            # Calculate text similarity using difflib
-            similarity = difflib.SequenceMatcher(None, query.lower(), search_result.content.lower()).ratio()
-            
-            # Only include results that are relevant enough
-            if similarity > SIMILARITY_THRESHOLD:
-                # Add similarity score to result
-                filtered_results.append({
-                    'url': search_result.url,
-                    'content': search_result.content,
-                    'similarity': similarity
-                })
+            try:
+                # Calculate text similarity using difflib
+                similarity = difflib.SequenceMatcher(None, query.lower(), search_result.content.lower()).ratio()
+                
+                # Only include results that are relevant enough
+                if similarity > SIMILARITY_THRESHOLD:
+                    # Add similarity score to result
+                    filtered_results.append({
+                        'url': search_result.url,
+                        'content': search_result.content,
+                        'similarity': similarity
+                    })
+            except Exception as e:
+                logger.error(f"Error processing search result: {str(e)}")
+                continue
         
         # Sort by similarity score
         filtered_results.sort(key=lambda x: x['similarity'], reverse=True)

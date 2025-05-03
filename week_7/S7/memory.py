@@ -180,25 +180,28 @@ class MemoryManager:
 
     def search(self, query: str, top_k: int = 5) -> SearchOutput:
         """Search for relevant pages"""
-        if not self.index:
+        if not self.index or len(self.metadata) == 0:
             return SearchOutput(results=[])
         
         try:
             # Get query embedding
             query_embedding = self.get_embedding(query)
             
+            # Ensure top_k doesn't exceed available documents
+            actual_top_k = min(top_k, len(self.metadata))
+            
             # Search index
-            D, I = self.index.search(query_embedding.reshape(1, -1), top_k)
+            D, I = self.index.search(query_embedding.reshape(1, -1), actual_top_k)
             
             # Get results
             results = []
-            for idx in I[0]:
+            for i, idx in enumerate(I[0]):
                 if idx < len(self.metadata):
                     result = self.metadata[idx]
                     results.append(SearchResult(
                         url=result['url'],
                         content=result['content'],
-                        score=float(D[0][idx]),
+                        score=float(D[0][i]),  # Use i instead of idx for score
                         timestamp=datetime.fromisoformat(result['timestamp']),
                         hash=result['hash']
                     ))

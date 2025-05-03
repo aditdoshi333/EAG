@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="128" height="128" rx="16" fill="#4285f4"/>
+  
+  <!-- Circular background -->
+  <circle cx="64" cy="64" r="52" fill="white"/>
+  
+  <!-- Shopping bag -->
+  <rect x="36" y="56" width="56" height="48" rx="4" fill="#4285f4"/>
+  
+  <!-- Bag handles -->
+  <path d="M44 56c0-11 9-20 20-20s20 9 20 20" stroke="#4285f4" stroke-width="6" fill="none"/>
+  
+  <!-- Heart for wishlist -->
+  <path d="M64 92l-16-16c-3-3-3-8 0-11s8-3 11 0l5 5 5-5c3-3 8-3 11 0s3 8 0 11l-16 16z" fill="white"/>
+  
+  <!-- Stars (wishlist items) -->
+  <path d="M42 32l1.5 4.5H48l-3.5 2.5 1.5 4.5-3.5-2.5-3.5 2.5 1.5-4.5-3.5-2.5h4.5z" fill="#4285f4"/>
+  <path d="M96 40l1.5 4.5h4.5l-3.5 2.5 1.5 4.5-3.5-2.5-3.5 2.5 1.5-4.5-3.5-2.5h4.5z" fill="#4285f4"/>
+  <path d="M88 24l1 3h3l-2.5 1.5 1 3-2.5-1.5-2.5 1.5 1-3-2.5-1.5h3z" fill="#4285f4"/>
+</svg> 

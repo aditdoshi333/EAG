@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email Tone Checker</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Email Tone Checker</h1>
+    
+    <div class="input-group">
+      <label for="client-email">Client's Email:</label>
+      <textarea id="client-email" placeholder="Paste the client's email here..."></textarea>
+    </div>
+    
+    <div class="input-group">
+      <label for="my-response">Your Response:</label>
+      <textarea id="my-response" placeholder="Type your drafted response here..."></textarea>
+    </div>
+    
+    <button id="analyze-btn">Analyze Tone</button>
+    
+    <div id="error-message" class="error-message"></div>
+    
+    <div id="result" class="hidden">
+      <div class="result-section">
+        <h2>Tone Analysis</h2>
+        <div id="tone-content" class="tone-box"></div>
+      </div>
+      
+      <div class="result-section">
+        <h2>Suggested Improvements</h2>
+        <div id="suggestion-content" class="suggestion-box"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 

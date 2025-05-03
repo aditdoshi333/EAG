@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shopping Comparison Agent</title>
+  <style>
+    body {
+      width: 400px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .results {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    .loading.active {
+      display: block;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .log-container {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .log-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 5px;
+      font-size: 11px;
+      color: #666;
+    }
+    .sequence {
+      background-color: #007bff;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .timestamp {
+      color: #666;
+    }
+    .type {
+      font-weight: bold;
+      color: #28a745;
+    }
+    .step {
+      color: #6c757d;
+      font-style: italic;
+    }
+    .log-data {
+      margin: 0;
+      padding: 8px;
+      background-color: #f8f9fa;
+      border-radius: 3px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Shopping Comparison Agent</h2>
+    <div class="input-group">
+      <label for="productQuery">What would you like to buy?</label>
+      <input type="text" id="productQuery" placeholder="e.g., gaming laptop under $1000">
+    </div>
+    <button id="searchButton">Search</button>
+    <div class="loading" id="loadingIndicator">
+      <div class="spinner"></div>
+      <p>Analyzing products...</p>
+    </div>
+    <div class="results" id="results"></div>
+    <div class="log-container" id="logContainer"></div>
+  </div>
+  <script src="utils/logger.js"></script>
+  <script src="utils/api.js"></script>
+  <script src="utils/tools.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html> 
